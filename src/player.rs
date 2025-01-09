@@ -5,7 +5,6 @@ use crate::{
     constants::{WINDOW_HEIGHT, WINDOW_WIDTH},
 };
 
-
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {

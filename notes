@@ -1,0 +1,4 @@
+# Query
+- Bundle CANNOT be queried.
+- Only Components & Entities can be queried
+- You don't need to have command in system call

@@ -2,7 +2,10 @@ use std::time::Duration;
 
 use bevy::{prelude::*, time::common_conditions::on_timer};
 
-use crate::{components::Velocity, constants::WINDOW_HEIGHT};
+use crate::{collision::Collider, components::Velocity, constants::WINDOW_HEIGHT};
+
+const BULLET_SHAPE: bevy::prelude::Vec2 = Vec2::new(2.0, 10.0);
+const BULLET_COLOR: bevy::prelude::Color = Color::srgb(1.0, 0.0, 0.0);
 
 #[derive(Component)]
 pub struct Power(pub i32);
@@ -16,20 +19,22 @@ pub struct BulletBundle {
     pub bullet: Bullet,
     pub power: Power,
     pub velocity: Velocity,
+    pub collider: Collider,
 }
 
 impl BulletBundle {
     pub fn new(x: f32, y: f32, speed: f32) -> Self {
         Self {
-            sprite: Sprite::from_color(Color::srgb(1.0, 0., 0.), Vec2::ONE),
+            sprite: Sprite::from_color(BULLET_COLOR, Vec2::ONE),
             transform: Transform {
                 translation: Vec3::new(x, y, 0.),
-                scale: Vec3::new(8., 16., 0.),
+                scale: Vec3::new(BULLET_SHAPE.x, BULLET_SHAPE.y, 0.),
                 ..Default::default()
             },
             bullet: Bullet,
             power: Power(1),
             velocity: Velocity(Vec2::new(0., speed)),
+            collider: Collider,
         }
     }
 }

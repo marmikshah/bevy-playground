@@ -2,7 +2,7 @@ use std::{num, time::Duration};
 
 use bevy::{prelude::*, scene::ron::de, time::common_conditions::on_timer};
 
-use crate::{components::Velocity, constants::WINDOW_HEIGHT};
+use crate::{collision::Collider, components::Velocity, constants::WINDOW_HEIGHT};
 
 #[derive(Resource, Default, DerefMut, Deref)]
 pub struct TotalBricks(pub i32);
@@ -20,18 +20,19 @@ impl Plugin for BrickPlugin {
 }
 
 #[derive(Component)]
-pub struct HealthPoints(i32);
+pub struct HealthPoints(pub i32);
 
 #[derive(Component)]
 pub struct Brick;
 
 #[derive(Bundle)]
 pub struct BrickBundle {
-    sprite: Sprite,
-    transform: Transform,
-    velocity: Velocity,
-    hp: HealthPoints,
-    brick: Brick,
+    pub sprite: Sprite,
+    pub transform: Transform,
+    pub velocity: Velocity,
+    pub hp: HealthPoints,
+    pub brick: Brick,
+    pub collider: Collider,
 }
 
 impl BrickBundle {
@@ -46,6 +47,7 @@ impl BrickBundle {
             velocity: velocity,
             hp: hp,
             brick: Brick,
+            collider: Collider,
         }
     }
 }

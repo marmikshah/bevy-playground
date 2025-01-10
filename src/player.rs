@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{input::touch::TouchPhase, prelude::*};
 
 use crate::{
     components::Velocity,
@@ -66,7 +66,7 @@ pub fn change_direction(
     mut query: Query<(&mut Velocity, &mut Transform, &Player)>,
     keys: Res<ButtonInput<KeyCode>>,
 ) {
-    if let Ok((mut velocity, mut transform, player)) = query.get_single_mut() {
+    if let Ok((mut velocity, transform, player)) = query.get_single_mut() {
         if keys.pressed(KeyCode::KeyA) && transform.translation.x > -(WINDOW_WIDTH / 2.) {
             velocity.0.x = f32::abs(velocity.0.x) * -1.;
         }

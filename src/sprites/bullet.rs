@@ -2,14 +2,13 @@ use std::time::Duration;
 
 use bevy::{prelude::*, time::common_conditions::on_timer};
 
-use crate::entities::Velocity;
+use crate::entities::{Power, Velocity};
+
+use super::player::Player;
 
 const BULLET_OFFSET: f32 = 20.0;
 const BULLET_SHAPE: bevy::prelude::Vec2 = Vec2::new(2.0, 10.0);
 const BULLET_COLOR: bevy::prelude::Color = Color::srgb(1.0, 0.0, 0.0);
-
-#[derive(Component)]
-pub struct Power(pub i32);
 
 pub struct BulletPlugin;
 
@@ -51,10 +50,7 @@ impl Plugin for BulletPlugin {
 #[derive(Component)]
 pub struct Bullet;
 
-pub fn spawn_bullet(
-    mut commands: Commands,
-    mut query: Query<&Transform, With<crate::player::Player>>,
-) {
+pub fn spawn_bullet(mut commands: Commands, mut query: Query<&Transform, With<Player>>) {
     if let Ok(transform) = query.get_single() {
         let x = transform.translation.x;
         let y = transform.translation.y + transform.scale.y + BULLET_OFFSET;

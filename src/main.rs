@@ -1,8 +1,6 @@
-mod brick;
-mod bullet;
+mod sprites;
 mod entities;
 mod physics;
-mod player;
 mod resources;
 mod systems;
 

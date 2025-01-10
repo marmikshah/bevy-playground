@@ -6,7 +6,7 @@
  */
 use bevy::prelude::*;
 
-use crate::{brick, bullet, player};
+use crate::sprites;
 
 pub struct PhysicsManager;
 
@@ -15,9 +15,9 @@ impl Plugin for PhysicsManager {
         app.add_event::<collision::CollisionEvent>().add_systems(
             FixedUpdate,
             (
-                player::move_player,
-                bullet::move_bullet,
-                brick::move_brick,
+                sprites::player::move_player,
+                sprites::bullet::move_bullet,
+                sprites::brick::move_brick,
                 collision::check_collisions,
             )
                 .chain(),
@@ -32,9 +32,9 @@ mod collision {
     };
 
     use crate::{
-        brick::Brick,
-        bullet::{Bullet, Power},
-        entities::HealthPoints,
+        entities::{HealthPoints, Power},
+        sprites::brick::Brick,
+        sprites::bullet::Bullet,
     };
 
     #[derive(Event, Default)]

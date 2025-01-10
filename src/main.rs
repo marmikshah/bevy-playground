@@ -1,15 +1,16 @@
 mod brick;
 mod bullet;
-mod collision;
-mod components;
-mod constants;
+mod entities;
+mod physics;
 mod player;
 mod resources;
 mod systems;
 
 use bevy::prelude::*;
-use constants::{WINDOW_HEIGHT, WINDOW_WIDTH};
 use game::CoreGame;
+
+const WINDOW_HEIGHT: f32 = 720.;
+const WINDOW_WIDTH: f32 = 480.;
 
 fn main() {
     App::new()

@@ -1,8 +1,7 @@
 mod brick;
 mod bullet;
-mod collision;
-mod components;
-mod constants;
+mod entities;
+mod physics;
 mod player;
 mod resources;
 mod systems;
@@ -10,7 +9,7 @@ mod systems;
 use bevy::prelude::*;
 use brick::BrickPlugin;
 use bullet::BulletPlugin;
-use collision::CollisionEngine;
+use physics::PhysicsManager;
 use player::PlayerPlugin;
 use systems::spawn_camera;
 
@@ -24,7 +23,7 @@ pub struct CoreGame;
 
 impl Plugin for CoreGame {
     fn build(&self, app: &mut App) {
-        app.add_plugins((PlayerPlugin, BulletPlugin, BrickPlugin, CollisionEngine))
+        app.add_plugins((PlayerPlugin, BulletPlugin, BrickPlugin, PhysicsManager))
             .add_systems(Startup, spawn_camera);
     }
 }

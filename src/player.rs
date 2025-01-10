@@ -1,9 +1,5 @@
-use bevy::{input::touch::TouchPhase, prelude::*};
-
-use crate::{
-    components::Velocity,
-    constants::{WINDOW_HEIGHT, WINDOW_WIDTH},
-};
+use crate::entities::Velocity;
+use bevy::prelude::*;
 
 pub struct PlayerPlugin;
 
@@ -49,14 +45,15 @@ pub fn spawn_player(mut commands: Commands) {
 
 pub fn move_player(
     mut query: Query<(&mut Velocity, &mut Transform), With<Player>>,
+    window: Query<&Window>,
     time: Res<Time>,
 ) {
     if let Ok((mut velocity, mut transform)) = query.get_single_mut() {
         transform.translation.x += velocity.0.x * time.delta_secs();
 
-        if transform.translation.x < -(crate::constants::WINDOW_WIDTH / 2.0) {
+        if transform.translation.x < -(window.single().width() / 2.0) {
             velocity.0.x = f32::abs(velocity.0.x);
-        } else if transform.translation.x > crate::constants::WINDOW_WIDTH / 2.0 {
+        } else if transform.translation.x > window.single().width() / 2.0 {
             velocity.0.x = -f32::abs(velocity.0.x);
         }
     }
@@ -65,13 +62,15 @@ pub fn move_player(
 pub fn change_direction(
     mut query: Query<(&mut Velocity, &mut Transform, &Player)>,
     keys: Res<ButtonInput<KeyCode>>,
+    window: Query<&Window>,
 ) {
     if let Ok((mut velocity, transform, player)) = query.get_single_mut() {
-        if keys.pressed(KeyCode::KeyA) && transform.translation.x > -(WINDOW_WIDTH / 2.) {
+        if keys.pressed(KeyCode::KeyA) && transform.translation.x > -(window.single().width() / 2.)
+        {
             velocity.0.x = f32::abs(velocity.0.x) * -1.;
         }
 
-        if keys.pressed(KeyCode::KeyD) && transform.translation.x < WINDOW_WIDTH / 2. {
+        if keys.pressed(KeyCode::KeyD) && transform.translation.x < window.single().width() / 2. {
             velocity.0.x = f32::abs(velocity.0.x);
         }
     }

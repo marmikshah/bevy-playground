@@ -1,8 +1,8 @@
-use std::{num, time::Duration};
+use std::time::Duration;
 
-use bevy::{prelude::*, scene::ron::de, time::common_conditions::on_timer};
+use bevy::{prelude::*, time::common_conditions::on_timer};
 
-use crate::{collision::Collider, components::Velocity, constants::WINDOW_HEIGHT};
+use crate::entities::{HealthPoints, Velocity};
 
 #[derive(Resource, Default, DerefMut, Deref)]
 pub struct TotalBricks(pub i32);
@@ -10,17 +10,12 @@ pub struct TotalBricks(pub i32);
 pub struct BrickPlugin;
 impl Plugin for BrickPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<TotalBricks>()
-            .add_systems(
-                Update,
-                spawn_brick.run_if(on_timer(Duration::from_secs_f32(2.0))),
-            )
-            .add_systems(Update, move_brick);
+        app.init_resource::<TotalBricks>().add_systems(
+            Update,
+            spawn_brick.run_if(on_timer(Duration::from_secs_f32(2.0))),
+        );
     }
 }
-
-#[derive(Component)]
-pub struct HealthPoints(pub i32);
 
 #[derive(Component)]
 pub struct Brick;
@@ -32,7 +27,6 @@ pub struct BrickBundle {
     pub velocity: Velocity,
     pub hp: HealthPoints,
     pub brick: Brick,
-    pub collider: Collider,
 }
 
 impl BrickBundle {
@@ -47,28 +41,34 @@ impl BrickBundle {
             velocity: velocity,
             hp: hp,
             brick: Brick,
-            collider: Collider,
         }
     }
 }
 
-fn spawn_brick(mut commands: Commands, mut num_bricks: ResMut<TotalBricks>) {
-    // println!("Current Bricks: {}", num_bricks.0);
+fn spawn_brick(
+    mut commands: Commands,
+    mut num_bricks: ResMut<TotalBricks>,
+    window: Query<&Window>,
+) {
     if num_bricks.0 < 3 {
         let velocity = Velocity(Vec2::new(0., -500.));
         let hp: HealthPoints = HealthPoints(100);
-        let brick = BrickBundle::new(0., WINDOW_HEIGHT, hp, velocity);
-        println!("Spawning Brick!");
+        let brick = BrickBundle::new(0., window.single().height(), hp, velocity);
         commands.spawn(brick);
         num_bricks.0 += 1;
     }
 }
 
-fn move_brick(mut query: Query<(&mut Transform, &mut Velocity), With<Brick>>, time: Res<Time>) {
+pub fn move_brick(
+    mut query: Query<(&mut Transform, &mut Velocity), With<Brick>>,
+    window: Query<&mut Window>,
+    time: Res<Time>,
+) {
+    let height = window.single().height();
     let gravity: f32 = -9.8 * 2.0;
     let damping: f32 = 0.97;
-    let bottom_limit: f32 = -(WINDOW_HEIGHT / 2.0);
-    let top_limit: f32 = WINDOW_HEIGHT / 2.0;
+    let bottom_limit: f32 = -(height / 2.0);
+    let top_limit: f32 = height / 2.0;
 
     for (mut transform, mut velocity) in query.iter_mut() {
         velocity.0.y += gravity * time.delta_secs();

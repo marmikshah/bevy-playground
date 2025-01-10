@@ -2,8 +2,9 @@ use std::time::Duration;
 
 use bevy::{prelude::*, time::common_conditions::on_timer};
 
-use crate::{collision::Collider, components::Velocity, constants::WINDOW_HEIGHT};
+use crate::entities::Velocity;
 
+const BULLET_OFFSET: f32 = 20.0;
 const BULLET_SHAPE: bevy::prelude::Vec2 = Vec2::new(2.0, 10.0);
 const BULLET_COLOR: bevy::prelude::Color = Color::srgb(1.0, 0.0, 0.0);
 
@@ -19,7 +20,6 @@ pub struct BulletBundle {
     pub bullet: Bullet,
     pub power: Power,
     pub velocity: Velocity,
-    pub collider: Collider,
 }
 
 impl BulletBundle {
@@ -34,7 +34,6 @@ impl BulletBundle {
             bullet: Bullet,
             power: Power(1),
             velocity: Velocity(Vec2::new(0., speed)),
-            collider: Collider,
         }
     }
 }
@@ -58,7 +57,7 @@ pub fn spawn_bullet(
 ) {
     if let Ok(transform) = query.get_single() {
         let x = transform.translation.x;
-        let y = transform.translation.y + transform.scale.y + crate::constants::BULLET_OFFSET;
+        let y = transform.translation.y + transform.scale.y + BULLET_OFFSET;
 
         let bundle = BulletBundle::new(x, y, 250.);
         commands.spawn(bundle);
@@ -68,12 +67,14 @@ pub fn spawn_bullet(
 pub fn move_bullet(
     mut commands: Commands,
     mut query: Query<(Entity, &mut Transform, &mut Velocity), With<Bullet>>,
+    window: Query<&Window>,
     time: Res<Time>,
 ) {
+    let height = window.single().height();
     for (entity, mut transform, velocity) in query.iter_mut() {
         transform.translation.y += velocity.0.y * time.delta_secs();
 
-        if transform.translation.y > WINDOW_HEIGHT * 2. {
+        if transform.translation.y > height * 2. {
             commands.entity(entity).despawn();
         }
     }
